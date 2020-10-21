@@ -8,7 +8,6 @@ const BASE_URL = 'https://hack-or-snooze-v3.herokuapp.com';
 class StoryList {
 	constructor(stories) {
 		this.stories = stories;
-		console.log(stories);
 	}
 
 	/**
@@ -28,9 +27,11 @@ class StoryList {
 		// query the /stories endpoint (no auth required)
 		const response = await axios.get(`${BASE_URL}/stories`);
 		// turn the plain old story objects from the API into instances of the Story class
+		//console.log(response);
 		const stories = response.data.stories.map((story) => new Story(story));
 		// build an instance of our own class using the new array of stories
 		const storyList = new StoryList(stories);
+		//console.log(storyList);
 		return storyList;
 	}
 
@@ -295,5 +296,23 @@ class Story {
 		this.storyId = storyObj.storyId;
 		this.createdAt = storyObj.createdAt;
 		this.updatedAt = storyObj.updatedAt;
+	}
+
+
+	/**
+   * Make a PATCH request against /stories/{storyID} to update a single story
+   * - user: an instance of User
+   * - storyData: an object containing the properties you want to update
+   */
+
+  	async update(user, storyData) {
+		const response = await axios({
+			url: `${BASE_URL}/stories/${this.storyId}`,
+			method: 'PATCH',
+			data: {
+				token: user.loginToken,
+				story: storyData
+			}
+		});
 	}
 }
